@@ -1,0 +1,42 @@
+version: "3.0"
+
+services:
+  rbdbm:
+    image: mariadb
+    environment: 
+      MYSQL_ROOT_PASSWORD : "Q12345"
+      MYSQL_DATABASE: wordpress
+      #MYSQL_USER: wordpressuser
+      #MYSQL_PASSWORD: wordpress
+    volumes:
+      - db:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin:5.0.4     
+    ports:
+    - "8000:80" 
+    environment:  
+      PMA_ARBITRARY: 1
+      PMA_HOST: rbdbm
+      MYSQL_PASSWORD: "Q12345"
+    depends_on: 
+    - rbdbm
+
+  wordpress:
+    image: wordpress
+    ports:
+      - 8080:80
+    environment:
+      WORDPRESS_DB_HOST: rbdbm
+      WORDPRESS_DB_USER: root
+      WORDPRESS_DB_PASSWORD: Q12345
+      WORDPRESS_DB_NAME: wordpress
+    depends_on: 
+    - rbdbm
+    volumes:
+      - wordpress:/var/www/html
+
+volumes: 
+  db:
+  wordpress:
+
